@@ -3765,7 +3765,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
   // Skip the UTF-8 BOM if there is one.
   if (strncmp(source, "\xEF\xBB\xBF", 3) == 0) source += 3;
   
-  Parser parser;
+  Parser parser = {0};
   parser.vm = vm;
   parser.module = module;
   parser.source = source;
@@ -3775,13 +3775,24 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
   parser.currentLine = 1;
   parser.numParens = 0;
 
-  // Zero-init the current token. This will get copied to previous when
-  // nextToken() is called below.
+  // Zero-init all tokens.
   parser.next.type = TOKEN_ERROR;
   parser.next.start = source;
   parser.next.length = 0;
   parser.next.line = 0;
   parser.next.value = UNDEFINED_VAL;
+
+  parser.current.type = TOKEN_ERROR;
+  parser.current.start = NULL;
+  parser.current.length = 0;
+  parser.current.line = 0;
+  parser.current.value = UNDEFINED_VAL;
+
+  parser.previous.type = TOKEN_ERROR;
+  parser.previous.start = NULL;
+  parser.previous.length = 0;
+  parser.previous.line = 0;
+  parser.previous.value = UNDEFINED_VAL;
 
   parser.printErrors = printErrors;
   parser.hasError = false;
