@@ -150,6 +150,7 @@ ObjFiber* wrenNewFiber(WrenVM* vm, ObjClosure* closure)
 {
   // Allocate the arrays before the fiber in case it triggers a GC.
   CallFrame* frames = ALLOCATE_ARRAY(vm, CallFrame, INITIAL_CALL_FRAMES);
+  memset(frames, 0, INITIAL_CALL_FRAMES * sizeof(CallFrame*));
   
   // Add one slot for the unused implicit receiver slot that the compiler
   // assumes all functions have.
@@ -157,6 +158,7 @@ ObjFiber* wrenNewFiber(WrenVM* vm, ObjClosure* closure)
       ? 1
       : wrenPowerOf2Ceil(closure->fn->maxSlots + 1);
   Value* stack = ALLOCATE_ARRAY(vm, Value, stackCapacity);
+  memset(stack, 0, stackCapacity * sizeof(Value*));
   
   ObjFiber* fiber = ALLOCATE(vm, ObjFiber);
   initObj(vm, &fiber->obj, OBJ_FIBER, vm->fiberClass);
